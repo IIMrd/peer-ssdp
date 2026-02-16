@@ -26,12 +26,30 @@
         "url": "https://github.com/IIMrd/peer-ssdp.git"
     },
     "type": "module",
-    "keywords": ["ssdp", "upnp", "nsd", "network service discovery"],
-    "exports": "./lib/peer-ssdp.js",
-    "files": [
-        "lib/"
+    "keywords": [
+        "ssdp",
+        "upnp",
+        "nsd",
+        "network service discovery"
     ],
+    "exports": {
+        ".": {
+            "types": "./dist/peer-ssdp.d.ts",
+            "default": "./dist/peer-ssdp.js"
+        }
+    },
+    "files": [
+        "dist/"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
+    },
     "engines": {
         "node": ">=18"
+    },
+    "devDependencies": {
+        "@types/node": "^25.2.3",
+        "typescript": "^5.9.3"
     }
 }
