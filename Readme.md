@@ -13,76 +13,65 @@ Setup
   
 Usage
 =====
-Peer is an `EventEmitter` so you can use the common `EventEmitter` API to subscribe to specific events.
+`Peer` is a typed `EventEmitter`. Full TypeScript definitions are included.
 
-```javascript
+```typescript
 import { createPeer } from "@iimrd/peer-ssdp";
+
 const peer = createPeer();
-var interval;
-/**
- * handle peer ready event. This event will be emitted after `peer.start()` is called.
- */
-peer.on("ready",function(){
-	// handle ready event
-	// send ssdp:alive messages every 1s
-	// {{networkInterfaceAddress}} will be replaced before
-	// sending the SSDP message with the actual IP Address of the corresponding
-	// Network interface. This is helpful for example in UPnP for LOCATION value
-	interval = setInterval(function(){
-		peer.alive({
-			ST: "upnp:rootdevice",
-			SERVER: "...",
-			ST: headers.ST,
-			USN: "...",
-			LOCATION: "http://{{networkInterfaceAddress}}/device-desc.xml",
-		});
-	}, 1000);
-	// shutdown peer after 10 s and send a ssdp:byebye message before
-	setTimeout(function(){
-		clearInterval(interval);
-		// Close peer. Afer peer is closed the `close` event will be emitted.
-		peer.close();
-	}, 10000);
+
+// Emitted after peer.start() is called
+peer.on("ready", () => {
+    // Send ssdp:alive notification
+    // {{networkInterfaceAddress}} is replaced per network interface
+    peer.alive({
+        NT: "upnp:rootdevice",
+        SERVER: "MyServer/1.0",
+        USN: "uuid:my-device-uuid::upnp:rootdevice",
+        LOCATION: "http://{{networkInterfaceAddress}}/device-desc.xml",
+    });
+
+    // Search for devices
+    peer.search({
+        ST: "upnp:rootdevice",
+    });
+
+    // Shut down after 10s
+    setTimeout(() => {
+        peer.byebye({
+            NT: "upnp:rootdevice",
+            USN: "uuid:my-device-uuid::upnp:rootdevice",
+        }, () => {
+            peer.close();
+        });
+    }, 10000);
 });
 
-// handle SSDP NOTIFY messages. 
-// param headers is JSON object containing the headers of the SSDP NOTIFY message as key-value-pair. 
-// param address is the socket address of the sender
-peer.on("notify",function(headers, address){
-	// handle notify event
+// Handle SSDP NOTIFY messages
+peer.on("notify", (headers, address) => {
+    console.log("NOTIFY from", address, headers);
 });
 
-// handle SSDP M-SEARCH messages. 
-// param headers is JSON object containing the headers of the SSDP M-SEARCH message as key-value-pair. 
-// param address is the socket address of the sender
-peer.on("search",function(headers, address){
-	// handle search request
-	// reply to search request
-	// Also here the {{networkInterfaceAddress}} will be replaced before
-  // sending the SSDP message with the actual IP Address of the corresponding
-  // Network interface.
-	peer.reply({
-		ST: "upnp:rootdevice",
-		SERVER: "...",
-		ST: headers.ST,
-		USN: "...",
-		LOCATION: "http://{{networkInterfaceAddress}}/device-desc.xml",
-	},address);
+// Handle SSDP M-SEARCH messages and reply
+peer.on("search", (headers, address) => {
+    peer.reply({
+        ST: headers.ST,
+        SERVER: "MyServer/1.0",
+        USN: "uuid:my-device-uuid::upnp:rootdevice",
+        LOCATION: "http://{{networkInterfaceAddress}}/device-desc.xml",
+    }, address);
 });
 
-// handle SSDP HTTP 200 OK messages. 
-// param headers is JSON object containing the headers of the SSDP HTTP 200 OK  message as key-value-pair. 
-// param address is the socket address of the sender
-peer.on("found",function(headers, address){
-	// handle found event
+// Handle SSDP HTTP 200 OK responses
+peer.on("found", (headers, address) => {
+    console.log("Found device at", address, headers);
 });
 
-// handle peer close event. This event will be emitted after `peer.close()` is called.
-peer.on("close",function(){
-	// handle close event
+// Emitted after peer.close() is called
+peer.on("close", () => {
+    console.log("Peer closed");
 });
 
-// Start peer. Afer peer is ready the `ready` event will be emitted.
 peer.start();
 ``` 
 
