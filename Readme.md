@@ -1,21 +1,22 @@
-peer-ssdp 
-=========
+@iimrd/peer-ssdp
+================
 
-peer-ssdp is a simple Node.js module implementing the Simple Service Discovery Protocol SSDP as described in the
-[UPnP Device Architecture specification, Section 1](http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf)
+A Node.js implementation of the Simple Service Discovery Protocol (SSDP) as described in the
+[UPnP Device Architecture specification, Section 1](http://www.upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf).
+
+> **Note:** This is a maintained fork of [peer-ssdp](https://github.com/fraunhoferfokus/peer-ssdp) by Fraunhofer FOKUS.
 
 Setup
 =====
 
-  * use `npm install peer-ssdp` to install the module.
-  * run example with `node node_modules/peer-ssdp/test/ssdp-test.js`
+  * use `npm install @iimrd/peer-ssdp` to install the module.
   
 Usage
 =====
 Peer is an `EventEmitter` so you can use the common `EventEmitter` API to subscribe to specific events.
 
 ```javascript
-var ssdp = require("peer-ssdp");
+var ssdp = require("@iimrd/peer-ssdp");
 var peer = ssdp.createPeer();
 var interval;
 /**
@@ -90,6 +91,5 @@ License
 
 GNU Lesser General Public License v3.0, for more details please refer to the [LICENSE file](LICENSE).
 
-Contact us at famecontact@fokus.fraunhofer.de
-
+Originally developed by [Fraunhofer FOKUS](https://github.com/fraunhoferfokus/peer-ssdp).  
 Copyright (c) 2017 Fraunhofer FOKUS
