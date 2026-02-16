@@ -21,44 +21,43 @@
  *
  ******************************************************************************/
 
-var os = require('os');
-var ssdp = require("../lib/peer-ssdp");
-var SERVER = os.type() + "/" + os.release() + " UPnP/1.1 famium/0.0.1";
-var uuid = "6bd5eabd-b7c8-4f7b-ae6c-a30ccdeb5988";
-var peer = ssdp.createPeer();
+const os = require('os');
+const ssdp = require("../lib/peer-ssdp");
+const SERVER = os.type() + "/" + os.release() + " UPnP/1.1 famium/0.0.1";
+const uuid = "6bd5eabd-b7c8-4f7b-ae6c-a30ccdeb5988";
+const peer = ssdp.createPeer();
 
-peer.on("ready", function () {
+peer.on("ready", () => {
     console.log("ready");
     onReady();
-}).on("notify", function (headers, address) {
+}).on("notify", (headers, address) => {
     console.log("receive notify message from ", address);
     console.log(headers);
     console.log("=======================");
-}).on("search", function (headers, address) {
+}).on("search", (headers, address) => {
     console.log("receive search request message from ", address);
     console.log(headers);
     console.log("=======================");
-    var ST = headers.ST;
-    var headers = {
+    const replyHeaders = {
         LOCATION: "http://{{networkInterfaceAddress}}/upnp/devices/6bd5eabd-b7c8-4f7b-ae6c-a30ccdeb5988/desc.xml",
         SERVER: SERVER,
         ST: "upnp:rootdevice",
         USN: "uuid:" + uuid + "::upnp:rootdevice",
-            'BOOTID.UPNP.ORG': 1
+        'BOOTID.UPNP.ORG': 1
     };
     console.log("reply to search request from ", address);
-    console.log(headers);
+    console.log(replyHeaders);
     console.log("=======================");
-    peer.reply(headers, address);
-}).on("found", function (headers, address) {
+    peer.reply(replyHeaders, address);
+}).on("found", (headers, address) => {
     console.log("receive found message from ", address);
     console.log(headers);
     console.log("=======================");
-}).on("close", function () {
+}).on("close", () => {
     console.log("close");
 }).start();
 
-var onReady = function () {
+const onReady = () => {
     console.log("notify SSDP alive message");
     peer.alive({
         NT: "upnp:rootdevice",
@@ -72,14 +71,14 @@ var onReady = function () {
         ST: "upnp:rootdevice"
     });
 
-    setTimeout(function () {
+    setTimeout(() => {
         console.log("notify SSDP byebye message");
         peer.byebye({
             NT: "upnp:rootdevice",
             USN: "uuid:" + uuid + "::upnp:rootdevice",
             LOCATION: "http://{{networkInterfaceAddress}}/upnp/devices/6bd5eabd-b7c8-4f7b-ae6c-a30ccdeb5988/desc.xml",
             SERVER: SERVER
-        }, function () {
+        }, () => {
             peer.close();
         });
     }, 10000);
