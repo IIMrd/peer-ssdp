@@ -16,8 +16,8 @@ Usage
 Peer is an `EventEmitter` so you can use the common `EventEmitter` API to subscribe to specific events.
 
 ```javascript
-var ssdp = require("@iimrd/peer-ssdp");
-var peer = ssdp.createPeer();
+import { createPeer } from "@iimrd/peer-ssdp";
+const peer = createPeer();
 var interval;
 /**
  * handle peer ready event. This event will be emitted after `peer.start()` is called.

@@ -21,8 +21,8 @@
  *
  ******************************************************************************/
 
-const os = require('os');
-const ssdp = require("../lib/peer-ssdp");
+import os from 'node:os';
+import * as ssdp from "../lib/peer-ssdp.js";
 const SERVER = os.type() + "/" + os.release() + " UPnP/1.1 famium/0.0.1";
 const uuid = "6bd5eabd-b7c8-4f7b-ae6c-a30ccdeb5988";
 const peer = ssdp.createPeer();
